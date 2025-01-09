@@ -1,16 +1,39 @@
+import { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [name,setName] = useState('');
+  const [datetime,setDatetime]=useState('');
+  const [description,setDescripition]=useState('');
+
+  function addNewTransaction(ev) {
+    ev.preventDefault();
+    const url  = process.env.REACT_APP_API_URL+'/transaction';
+    fetch(url,{
+      method:'POST',
+      headers: {
+        'Content-type':'application/json'
+      },
+      body: JSON.stringify({name,description,datetime})
+    }).then(response=>{
+      response.json().then(json=>{
+        console.log('result',json);
+      })
+    });
+  }
+
   return (
    <main>
     <h1>$400<span>.00</span></h1>
-    <form>
+    <form onSubmit={addNewTransaction}>
       <div className="basic">
-      <input type="text" placeholder={'samsung tv'}/>
-      <input type="datetime-local"/>
+      <input type="text" value={name} 
+      onChange={ev=>setName(ev.target.value)}
+      placeholder={'samsung tv'}/>
+      <input type="datetime-local" value={datetime} onChange={ev=>setDatetime(ev.target.value)}/>
       </div>
       <div>
-      <input type="text" placeholder={'description'}/>
+      <input type="text" placeholder={'description'} value={description} onChange={ev=>setDescripition(ev.target.value)}/>
       </div>
       <button type="submit">Add new transaction</button>
     </form>
